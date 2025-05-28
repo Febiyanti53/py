@@ -1,7 +1,3 @@
-Untuk memenuhi permintaan Anda, saya akan memperbaiki inisialisasi konstruktor yang salah yaitu method _init_ seharusnya __init__ pada kelas Kamar, Tamu, dan Pemesanan. Selain itu, saya akan menambahkan metode polimorfisme tampil_info_kamar ke kelas Pemesanan yang override metode dari kelas Kamar tanpa mengubah alur program dan output. Saya juga akan memperbaiki cara instansiasi Pemesanan pada menu checkout. Terakhir, saya akan memastikan seluruh kode lengkap dan terstruktur dengan rapi dalam satu file Python yang bisa langsung dijalankan.
-
-`penginapan_choco.py`
-```py
 import datetime
 import os
 
@@ -200,16 +196,7 @@ class Pemesanan(Kamar, Tamu):
         self.crash = 0
         
         self.id_transaksi = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-
-    # Polimorfisme: override method tampil_info_kamar
-    def tampil_info_kamar(self):
-        """Override metode dari kelas Kamar untuk menampilkan informasi kamar yang dipesan."""
-        print("\nTipe Kamar yang Dipesan:")
-        for idx, kamar in enumerate(self.kamar_dipesan, 1):
-            print("{}. Tipe: {} - Nomor: {} - Harga/malam: Rp {:,}".format(
-                idx, kamar['tipe'], kamar['nomor'], kamar['harga']))
     
-
     def simpan_data(self):
         """Menyimpan data pemesanan ke file txt dengan status checkout dan pembayaran"""
         with open("data_checkin.txt", "a") as file:
@@ -425,12 +412,9 @@ def main():
         if pilihan == "1":
             pemesanan = Pemesanan()
             pemesanan.simpan_data()
-            pemesanan.tampil_info_kamar()  # Polimorfisme digunakan di sini
             pemesanan.tampil_struk()
         elif pilihan == "2":
-            # Instansiasi Pemesanan untuk checkout tanpa input data baru
             pemesanan = Pemesanan.__new__(Pemesanan)
-            Pemesanan.__init__(pemesanan)  # Memanggil __init__ agar variabel inisialisasi ada
             pemesanan.biaya_tambahan() 
         elif pilihan == "3":
             kamar = Kamar()
@@ -442,4 +426,4 @@ def main():
             print("Pilihan tidak valid, coba lagi.")
 
 if __name__ == "__main__":
-    main()
+   main()
