@@ -393,35 +393,85 @@ class Pemesanan(Kamar, Tamu):
                     else:
                         file_baru.write(line)
 
+import datetime
+import os
+
+class Kamar:
+    # ... (bagian __init__ dan method lainnya tetap sama seperti sebelumnya)
+
+    def tampil_status_kamar(self, tipe_kamar_dipilih=None):
+        """Method dasar di parent class (tidak perlu dipanggil langsung)"""
+        if tipe_kamar_dipilih is None:
+            tipe_kamar_dipilih = self.tipe_kamar_list
+            
+        kamar_terisi = self.kamar_terisi()
+        print("\nStatus kamar (TERISI/KOSONG):")
+        
+        for tipe in tipe_kamar_dipilih:
+            print(f"\n{tipe}:")
+            for kamar in self._nomor_kamar[tipe]:
+                status = "TERISI" if kamar in kamar_terisi else "KOSONG"
+                print(f"Kamar {kamar}: {status}")
+
+class Pemesanan(Kamar, Tamu):
+    # ... (bagian __init__ dan method lainnya tetap sama)
+
+    def tampil_status_kamar(self, tipe_kamar_dipilih=None):
+        """Override method dengan tampilan tabel"""
+        kamar_terisi = self.kamar_terisi()
+        max_kamar = max(len(kamar) for kamar in self._nomor_kamar.values())
+        
+        print("\n================ STATUS KAMAR PENGINAPAN CHOCO ================")
+        header = "| Tipe Kamar".ljust(30) + " |"
+        for i in range(max_kamar):
+            header += f" K-{i+1} |"
+        print(header)
+        print("|" + "-"*(30) + "-|" + "-----|"*max_kamar)
+        
+        for tipe in self.tipe_kamar_list:
+            row = f"| {tipe}".ljust(30) + " |"
+            kamar_list = self._nomor_kamar[tipe]
+            
+            for i in range(max_kamar):
+                if i < len(kamar_list):
+                    nomor = kamar_list[i]
+                    status = "T" if nomor in kamar_terisi else "K"
+                    row += f" {nomor}/{status} |"
+                else:
+                    row += "     |"
+            print(row)
+        
+        print("|" + "-"*(30) + "-|" + "-----|"*max_kamar)
+        print("Keterangan: K = Kosong, T = Terisi")
+        print("================================================================")
+
 def main():
     while True:
         print("\n=== Penginapan Choco ===")
         print("1. Check-in")
         print("2. Checkout")
-        print("3. Lihat Status Kamar (Tabel)")
-        print("4. Lihat Status Kamar (List)")
-        print("5. Keluar")
+        print("3. Lihat Status Kamar")
+        print("4. Keluar")
 
-        pilihan = input("Pilih menu (1/2/3/4/5): ")
+        pilihan = input("Pilih menu (1/2/3/4): ")
         if pilihan == "1":
             pemesanan = Pemesanan()
             pemesanan.simpan_data()
             pemesanan.tampil_struk()
         elif pilihan == "2":
             pemesanan = Pemesanan.__new__(Pemesanan)
-            pemesanan.biaya_tambahan() 
+            pemesanan.biaya_tambahan()
         elif pilihan == "3":
+            # Hanya menggunakan objek Pemesanan yang sudah meng-override method
             pemesanan = Pemesanan.__new__(Pemesanan)
-            Kamar.__init__(pemesanan)
-            pemesanan.tampil_status_kamar()  # Akan memanggil versi override (tabel)
+            Kamar.__init__(pemesanan)  # Inisialisasi bagian Kamar
+            pemesanan.tampil_status_kamar()  # Akan memanggil versi override
         elif pilihan == "4":
-            kamar = Kamar()
-            kamar.tampil_status_kamar()  # Akan memanggil versi parent (list)
-        elif pilihan == "5":
             print("Terima kasih telah menggunakan layanan kami.")
             break
         else:
             print("Pilihan tidak valid, coba lagi.")
 
 if __name__ == "__main__":
-   main()
+    main()
+            
