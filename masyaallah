@@ -398,9 +398,8 @@ def main():
         print("\n=== Penginapan Choco ===")
         print("1. Check-in")
         print("2. Checkout")
-        print("3. Lihat Status Kamar (Tabel)")
-        print("4. Lihat Status Kamar (List)")
-        print("5. Keluar")
+        print("3. Lihat Status Kamar")
+        print("4. Keluar")
 
         pilihan = input("Pilih menu (1/2/3/4/5): ")
         if pilihan == "1":
