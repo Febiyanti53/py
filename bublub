@@ -1,0 +1,97 @@
+import datetime
+from tabulate import tabulate  # Impor library tabulate
+
+class Kamar:
+    def __init__(self):
+        self.tipe_kamar_list = [
+            "Standard Room",
+            "Deluxe Room (single bed)",
+            "Family Room (2 tempat tidur)",
+            "Family Room (3 tempat tidur)"
+        ]
+
+        self._fasilitas_kamar = {
+            "Standard Room": ["Kasur nyaman ukuran Queen", "AC & Wi-Fi gratis", "TV LED 32 inci", "Kamar mandi dengan shower"],
+            "Deluxe Room (single bed)": ["Kasur ukuran King", "AC & Wi-Fi", "TV LED 42 inci dengan layanan streaming", "Kamar mandi dengan bathtub", "Balkon"],
+            "Family Room (2 tempat tidur)": ["2 Kasur ukuran Queen", "AC & Wi-Fi", "TV LED 50 inci dengan layanan streaming", "Kamar mandi luas dengan bathtub", "Ruang tamu kecil", "Sarapan gratis"],
+            "Family Room (3 tempat tidur)": ["2 Kasur ukuran Queen", "AC & Wi-Fi", "TV LED 50 inci dengan layanan streaming", "Kamar mandi luas dengan bathtub", "Ruang tamu kecil", "Sarapan gratis"]
+        }
+
+        self._nomor_kamar = {
+            "Standard Room": ["1A", "2A", "3A", "4A", "5A"],
+            "Deluxe Room (single bed)": ["2B", "2C", "3D"],
+            "Family Room (2 tempat tidur)": ["3A", "3B", "3C"],
+            "Family Room (3 tempat tidur)": ["4A", "4B", "4C"]
+        }
+
+        self._harga_kamar = {
+            "Standard Room": 150000,
+            "Deluxe Room (single bed)": 225000,
+            "Family Room (2 tempat tidur)": 345000,
+            "Family Room (3 tempat tidur)": 410000
+        }
+
+    def tampil_info_kamar(self):
+        print("Tipe Kamar yang Tersedia:")
+        for i, tipe in enumerate(self.tipe_kamar_list, start=1):
+            print("{}. {} - Rp {:,}".format(i, tipe, self._harga_kamar[tipe]))
+            for fasilitas in self._fasilitas_kamar[tipe]:
+                print("   - {}".format(fasilitas))
+
+    def kamar_terisi(self):
+        """Mendapatkan daftar kamar yang sedang terisi (belum checkout)"""
+        terisi = set()
+        try:
+            with open("data_checkin.txt", "r") as file:
+                for line in file:
+                    data = line.strip().split(" | ")
+                    if len(data) >= 14 and data[13] == "BELUM":
+                        kamar_data = data[14:]
+                        for i in range(1, len(kamar_data), 3):
+                            if i < len(kamar_data):
+                                terisi.add(kamar_data[i])
+        except FileNotFoundError:
+            pass
+        return terisi
+
+    def tampil_status_kamar(self, tipe_kamar_dipilih=None):
+        """Method dasar di parent class"""
+        if tipe_kamar_dipilih is None:
+            tipe_kamar_dipilih = self.tipe_kamar_list
+            
+        kamar_terisi = self.kamar_terisi()
+        print("\nStatus kamar (TERISI/KOSONG):")
+        
+        for tipe in tipe_kamar_dipilih:
+            print(f"\n{tipe}:")
+            for kamar in self._nomor_kamar[tipe]:
+                status = "TERISI" if kamar in kamar_terisi else "KOSONG"
+                print(f"Kamar {kamar}: {status}")
+
+
+class Pemesanan(Kamar, Tamu):
+    # ... [method sebelumnya tetap sama sampai tampil_status_kamar] ...
+
+    def tampil_status_kamar(self, tipe_kamar_dipilih=None):
+        """Menampilkan status kamar dalam format tabel menggunakan tabulate"""
+        kamar_terisi = super().kamar_terisi()
+        
+        # Menyiapkan data untuk tabulate
+        data_tabel = []
+        headers = ["Tipe Kamar"] + [f"Kamar {i+1}" for i in range(max(len(v) for v in self._nomor_kamar.values()))]
+        
+        for tipe in self.tipe_kamar_list:
+            baris = [tipe]
+            for kamar in self._nomor_kamar[tipe]:
+                status = "TERISI" if kamar in kamar_terisi else "KOSONG"
+                baris.append(f"{kamar} ({status})")
+            # Mengisi kolom kosong jika tipe kamar punya lebih sedikit kamar
+            while len(baris) < len(headers):
+                baris.append("-")
+            data_tabel.append(baris)
+        
+        print("\n================ STATUS KAMAR PENGINAPAN CHOCO ================")
+        print(tabulate(data_tabel, headers=headers, tablefmt="grid"))
+        print("===============================================================")
+
+# ... [kode lainnya tetap sama] ...
