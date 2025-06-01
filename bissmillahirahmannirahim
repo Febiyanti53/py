@@ -70,38 +70,30 @@ class Kamar:
 class Tamu:
     def __init__(self):
         self.nama = input("Masukkan nama pemesan: ")
-        self._nik = self.get_nik_validasi()
-        self._telepon = self.get_telepon_validasi()
+        self._nik = self._validasi_nik()
+        self._telepon = self._validasi_telepon()
 
-    def get_nik_validasi(self):
+    def _validasi_nik(self):
         while True:
-            try:
-                nik_input = input("Masukkan NIK: ")
-                if not nik_input.isdigit():
-                    raise ValueError("NIK hanya boleh angka")
-                if len(nik_input) != 16:
-                    raise ValueError("NIK harus 16 digit")
-                return nik_input
-            except ValueError as e:
-                print("Error: " + str(e))
+            nik_input = input("Masukkan NIK: ")
+            if not nik_input.isdigit():
+                print("Error: NIK hanya boleh angka")
+                continue
+            if len(nik_input) != 16:
+                print("Error: NIK harus 16 digit")
+                continue
+            return nik_input
 
-    def get_telepon_validasi(self):
+    def _validasi_telepon(self):
         while True:
-            try:
-                telepon_input = input("Masukkan No. Telepon: ")
-                if not telepon_input.isdigit():
-                    raise ValueError("Nomor telepon hanya boleh angka")
-                if len(telepon_input) < 10 or len(telepon_input) > 13:
-                    raise ValueError("Nomor telepon harus 10-13 digit")
-                return telepon_input
-            except ValueError as e:
-                print("Error: " + str(e))
-    
-    def get_nik(self):
-        return self._nik
-
-    def get_telepon(self):
-        return self._telepon
+            telepon_input = input("Masukkan No. Telepon: ")
+            if not telepon_input.isdigit():
+                print("Error: Nomor telepon hanya boleh angka")
+                continue
+            if len(telepon_input) < 10 or len(telepon_input) > 13:
+                print("Error: Nomor telepon harus 10-13 digit")
+                continue
+            return telepon_input
 
 
 class Pemesanan(Kamar, Tamu):
@@ -251,7 +243,7 @@ class Pemesanan(Kamar, Tamu):
             if kamar_info.endswith(' | '):
                 kamar_info = kamar_info[:-3]
                 
-            file.write(self.id_transaksi + " | " + self.nama + " | " + self.get_nik() + " | " + self.get_telepon() + " | "
+            file.write(self.id_transaksi + " | " + self.nama + " | " + self._nik + " | " + self._telepon + " | "
                       + str(self.jumlah_pesanan) + " | " + self.waktu_checkin.strftime("%d-%m-%Y %H:%M") + " | "
                       + self.checkout.strftime("%d-%m-%Y %H:%M") + " | " + str(self.lama_menginap) + " | "
                       + self.metode_pembayaran_dp + " | " + str(self.total_harga) + " | " + str(self.crash) + " | "
@@ -265,8 +257,8 @@ class Pemesanan(Kamar, Tamu):
         print("===========================================================")
         
         print("\nNama Tamu          : " + self.nama)
-        print("No. Telepon        : " + self.get_telepon())
-        print("NIK                : " + self.get_nik())
+        print("No. Telepon        : " + self._telepon)
+        print("NIK                : " + self._nik)
         
         print("\nDetail kamar yang dipesan:")
         for idx, kamar in enumerate(self.kamar_dipesan, 1):
@@ -399,8 +391,8 @@ class Pemesanan(Kamar, Tamu):
         print("===========================================================")
         
         print("\nNama Tamu          : " + self.nama)
-        print("No. Telepon        : " + self.get_telepon())
-        print("NIK                : " + self.get_nik())
+        print("No. Telepon        : " + self._telepon)
+        print("NIK                : " + self._nik)
         
         print("\nDetail kamar yang dipesan:")
         for idx, kamar in enumerate(self.kamar_dipesan, 1):
@@ -479,3 +471,4 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
