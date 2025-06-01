@@ -234,7 +234,7 @@ class Pemesanan(Kamar, Tamu):
                       + self.checkout.strftime("%d-%m-%Y %H:%M") + " | " + str(self.lama_menginap) + " | "
                       + self.metode_pembayaran_dp + " | " + str(self.total_harga) + " | " + str(self.crash) + " | "
                       + self.status_pembayaran + " | " + str(self.sisa_pembayaran) + " | BELUM | " + kamar_info + "\n")
-    
+           
     def tampil_struk(self):
         print("\n===========================================================")
         print("                      PENGINAPAN CHOCO                      ")
